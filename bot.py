@@ -120,7 +120,8 @@ def handle_text(update: Update, context: CallbackContext):
     elif mode=="nilai":
         df=pd.read_excel(FILE,"Projects")
         df.loc[df["ID"]==context.user_data["project_id"],"Nilai"]=int(text)
-        df.to_excel(FILE,"Projects",index=False)
+        dwith pd.ExcelWriter(FILE, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
+    df.to_excel(writer, sheet_name="Projects", index=False)
         update.message.reply_text("Nilai diperbarui")
 
     context.user_data["mode"]=None
