@@ -164,15 +164,16 @@ def export_pdf(query,context):
 # =============================
 def main():
     init_db()
-    updater=Updater(TOKEN)
-    dp=updater.dispatcher
 
-    dp.add_handler(CommandHandler("start",start))
+    updater = Updater(TOKEN, use_context=True)
+    dp = updater.dispatcher
+
+    dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CallbackQueryHandler(button))
-    dp.add_handler(MessageHandler(Filters.text & ~Filters.command,handle_text))
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, handle_text))
 
     updater.start_polling()
     updater.idle()
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
