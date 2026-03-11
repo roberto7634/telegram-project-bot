@@ -40,10 +40,87 @@ def button(update: Update, context: CallbackContext):
     query = update.callback_query
     query.answer()
 
+    # =====================
+    # TAMBAH PROJECT
+    # =====================
     if query.data == "tambah_project":
         query.message.reply_text("Ketik nama project:")
-        context.user_data["mode"]="add_project"
+        context.user_data["mode"] = "add_project"
 
+    # =====================
+    # PILIH PROJECT
+    # =====================
+    elif query.data == "pilih_project":
+
+        df = pd.read_excel(FILE, sheet_name="Projects")
+
+        if df.empty:
+            query.message.reply_text("Belum ada project.")
+            return
+
+        keyboard = []
+
+        for _, row in df.iterrows():
+            keyboard.append([
+                InlineKeyboardButton(
+                    row["Nama"],
+                    callback_data=f"setproj_{row['ID']}"
+                )
+            ])
+
+        query.message.reply_text(
+            "Pilih project:",
+            reply_markup=InlineKeyboardMarkup(keyboard)
+        )
+
+    # =====================
+    # SET PROJECT AKTIF
+    # =====================
+    elif query.data.startswith("setproj_"):
+
+        pid = int(query.data.split("_")[1])
+
+        context.user_data["project_id"] = pid
+
+        query.message.reply_text("✅ Project dipilih")
+
+    # =====================
+    # ABSEN
+    # =====================
+    elif query.data == "absen":
+
+        if "project_id" not in context.user_data:
+            query.message.reply_text("Pilih project dulu.")
+            return
+
+        query.message.reply_text("Ketik nama yang absen:")
+        context.user_data["mode"] = "absen"
+
+    # =====================
+    # KEUANGAN
+    # =====================
+    elif query.data == "keuangan":
+
+        if "project_id" not in context.user_data:
+            query.message.reply_text("Pilih project dulu.")
+            return
+
+        query.message.reply_text(
+            "Format:\nmasuk 100000 keterangan\natau\nkeluar 50000 beli bahan"
+        )
+
+        context.user_data["mode"] = "keuangan"
+
+    # =====================
+    # EXPORT
+    # =====================
+    elif query.data == "export":
+
+        if "project_id" not in context.user_data:
+            query.message.reply_text("Pilih project dulu.")
+            return
+
+        export_pdf(query, context)
 def handle_text(update: Update, context: CallbackContext):
     mode=context.user_data.get("mode")
     text=update.message.text
