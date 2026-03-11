@@ -119,7 +119,44 @@ def button(update: Update, context: CallbackContext):
         if "project_id" not in context.user_data:
             query.message.reply_text("Pilih project dulu.")
             return
+elif mode == "absen":
 
+    df = pd.read_excel(FILE, sheet_name="Absensi")
+
+    df.loc[len(df)] = [
+        datetime.now(),
+        context.user_data["project_id"],
+        text
+    ]
+
+    with pd.ExcelWriter(FILE, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
+        df.to_excel(writer, sheet_name="Absensi", index=False)
+
+    update.message.reply_text("✅ Absen tersimpan")
+
+
+elif mode == "keuangan":
+
+    data = text.split()
+
+    jenis = data[0]
+    jumlah = int(data[1])
+    keterangan = " ".join(data[2:])
+
+    df = pd.read_excel(FILE, sheet_name="Keuangan")
+
+    df.loc[len(df)] = [
+        datetime.now(),
+        context.user_data["project_id"],
+        jenis,
+        jumlah,
+        keterangan
+    ]
+
+    with pd.ExcelWriter(FILE, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
+        df.to_excel(writer, sheet_name="Keuangan", index=False)
+
+    update.message.reply_text("💰 Data keuangan tersimpan")
         export_pdf(query, context)
 def handle_text(update: Update, context: CallbackContext):
     mode=context.user_data.get("mode")
