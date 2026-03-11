@@ -11,12 +11,12 @@ FILE = "database_project.xlsx"
 
 def init_db():
     if not os.path.exists(FILE):
-        writer = pd.ExcelWriter(FILE, engine='openpyxl')
+        writer = pd.ExcelWriter(FILE, engine="openpyxl")
 
-        pd.DataFrame(columns=["UserID","Role"]).to_excel(writer,"Users",index=False)
-        pd.DataFrame(columns=["ID","Nama","Nilai"]).to_excel(writer,"Projects",index=False)
-        pd.DataFrame(columns=["Tanggal","ProjectID","Nama"]).to_excel(writer,"Absensi",index=False)
-        pd.DataFrame(columns=["Tanggal","ProjectID","Jenis","Jumlah","Keterangan"]).to_excel(writer,"Keuangan",index=False)
+        pd.DataFrame(columns=["UserID","Role"]).to_excel(writer, sheet_name="Users", index=False)
+        pd.DataFrame(columns=["ID","Nama","Nilai"]).to_excel(writer, sheet_name="Projects", index=False)
+        pd.DataFrame(columns=["Tanggal","ProjectID","Nama"]).to_excel(writer, sheet_name="Absensi", index=False)
+        pd.DataFrame(columns=["Tanggal","ProjectID","Jenis","Jumlah","Keterangan"]).to_excel(writer, sheet_name="Keuangan", index=False)
 
         writer.close()
 
@@ -54,7 +54,7 @@ def handle_text(update: Update, context: CallbackContext):
         df.loc[len(df)]=[new_id,text,0]
 
         with pd.ExcelWriter(FILE, engine="openpyxl", mode="a", if_sheet_exists="replace") as writer:
-            df.to_excel(writer, sheet_name="Projects", index=False)
+           df.to_excel(writer, sheet_name="Users", index=False)
 
         update.message.reply_text("✅ Project ditambahkan")
         context.user_data["mode"]=None
