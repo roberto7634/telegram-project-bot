@@ -3,14 +3,14 @@ name: run-bot
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/10 * * * *"
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Repo
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -18,11 +18,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install library
+      - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install pandas openpyxl reportlab python-telegram-bot==13.15
 
-      - name: Run bot
+      - name: Show Files
+        run: ls -R
+
+      - name: Run Bot
         run: |
-          timeout 300 python bot.py
+          echo "Starting bot..."
+          python bot.py
