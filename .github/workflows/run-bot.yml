@@ -2,13 +2,15 @@ name: run-bot
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "*/5 * * * *"
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -16,10 +18,11 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install library
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Run bot
-        run: python bot.py
+        run: |
+          timeout 300 python bot.py
